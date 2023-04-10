@@ -1,11 +1,15 @@
 package main
 
 import (
-//	"context"
-	"flag"
 	"fmt"
+	"context"
+	"flag"
+	"log"
+	"time"
 
-//	"github.com/Jiang-Gianni/go-docker-test/client"
+	"github.com/Jiang-Gianni/go-docker-test/client"
+	"github.com/Jiang-Gianni/go-docker-test/proto"
+	// "github.com/Jiang-Gianni/go-docker-test/client"
 )
 
 func main(){
@@ -21,11 +25,32 @@ func main(){
 
 	*/ 
 
-	listenAddr := flag.String("listenaddr", ":3000", "listen address the server is running")
-	flag.Parse()
-	svc := NewLogginService(NewMetricService(&priceFetcher{}))
+	var(
+		jsonAddr = flag.String("json", ":3000", "listen address of the json transport")
+		grpcAddr = flag.String("grpc", ":4000", "listen address of the grpc transport")
+		svc = NewLogginService(NewMetricService(&priceFetcher{}))
+		ctx = context.Background()
+	)
 
-	server := NewJSONAPIServer(*listenAddr, svc)
-	server.Run()
-	fmt.Println("Hello")
+	flag.Parse()
+
+	grpcClient, err := client.NewGRPCClient(":4000")
+	if err!= nil {
+		log.Fatal(err)
+	}
+	go func() {
+		time.Sleep(3 *time.Second)
+		resp, err := grpcClient.FetchPrice(ctx, &proto.PriceRequest{Ticker: "BTC"})
+		if err!= nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("%+v\n",resp)
+	}()
+
+	go makeGRPCServerAndRun(*grpcAddr, svc)
+
+	jsonServer := NewJSONAPIServer(*jsonAddr, svc)
+	jsonServer.Run()
+
+	
 }
