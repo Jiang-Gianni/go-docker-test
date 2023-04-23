@@ -27,10 +27,10 @@ func main() {
 
 	var (
 		jsonAddr = flag.String("json", ":3000", "listen address of the json transport")
-		grpcAddr = flag.String("grpc", ":4000", "listen address of the grpc transport")
-		//	grpcAddr = flag.String("grpc", "go-docker-test-production.up.railway.app:4000", "listen address of the grpc transport")
-		svc = NewLogginService(NewMetricService(&priceFetcher{}))
-		ctx = context.Background()
+		// grpcAddr = flag.String("grpc", ":4000", "listen address of the grpc transport")
+		grpcAddr = flag.String("grpc", "865d26c7-59b9-4fd7-b52c-c2d48c49600b:4000", "listen address of the grpc transport")
+		svc      = NewLogginService(NewMetricService(&priceFetcher{}))
+		ctx      = context.Background()
 	)
 
 	flag.Parse()
@@ -52,7 +52,7 @@ func main() {
 		fmt.Printf("%+v\n", resp)
 	}()
 
-	go makeGRPCServerAndRun(*grpcAddr, svc)
+	// go makeGRPCServerAndRun(*grpcAddr, svc)
 
 	jsonServer := NewJSONAPIServer(*jsonAddr, svc)
 	jsonServer.Run()
