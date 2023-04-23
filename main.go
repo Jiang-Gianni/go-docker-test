@@ -47,12 +47,12 @@ func main() {
 		time.Sleep(3 * time.Second)
 		resp, err := grpcClient.FetchPrice(ctx, &proto.PriceRequest{Ticker: "BTC"})
 		if err != nil {
-			log.Fatal(err)
+			//	log.Fatal(err)
 		}
 		fmt.Printf("%+v\n", resp)
 	}()
 
-	go makeGRPCServerAndRun(*grpcAddr, svc)
+	//	go makeGRPCServerAndRun(*grpcAddr, svc)
 
 	jsonServer := NewJSONAPIServer(*jsonAddr, svc)
 	jsonServer.Run()
