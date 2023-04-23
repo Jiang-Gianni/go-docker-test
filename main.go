@@ -52,7 +52,7 @@ func main() {
 		fmt.Printf("%+v\n", resp)
 	}()
 
-	//	go makeGRPCServerAndRun(*grpcAddr, svc)
+	go makeGRPCServerAndRun(*grpcAddr, svc)
 
 	jsonServer := NewJSONAPIServer(*jsonAddr, svc)
 	jsonServer.Run()
