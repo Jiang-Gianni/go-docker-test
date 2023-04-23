@@ -15,5 +15,3 @@ message PriceResponse {
     string ticker = 1;
     float price = 2;
     }
-
-

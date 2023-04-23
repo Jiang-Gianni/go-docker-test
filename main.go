@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"time"
 
@@ -12,39 +12,44 @@ import (
 	// "github.com/Jiang-Gianni/go-docker-test/client"
 )
 
-func main(){
+func main() {
 
 	/*
-	client := client.New("http://localhost:3000")
-	price, err := client.FetchPrice(context.Background(), "ET")
-	if err!=nil {
-		fmt.Println("Error ",err)
-	}
-	fmt.Printf("%+v\n", price)
-	return
+		client := client.New("http://localhost:3000")
+		price, err := client.FetchPrice(context.Background(), "ET")
+		if err!=nil {
+			fmt.Println("Error ",err)
+		}
+		fmt.Printf("%+v\n", price)
+		return
 
-	*/ 
+	*/
 
-	var(
+	var (
 		jsonAddr = flag.String("json", ":3000", "listen address of the json transport")
 		grpcAddr = flag.String("grpc", ":4000", "listen address of the grpc transport")
+		//	grpcAddr = flag.String("grpc", "go-docker-test-production.up.railway.app:4000", "listen address of the grpc transport")
 		svc = NewLogginService(NewMetricService(&priceFetcher{}))
 		ctx = context.Background()
 	)
 
 	flag.Parse()
 
-	grpcClient, err := client.NewGRPCClient(":4000")
-	if err!= nil {
+	fmt.Println("JSON address ", *jsonAddr)
+	fmt.Println("grpc adderss ", *grpcAddr)
+
+	grpcClient, err := client.NewGRPCClient(*grpcAddr)
+
+	if err != nil {
 		log.Fatal(err)
 	}
 	go func() {
-		time.Sleep(3 *time.Second)
+		time.Sleep(3 * time.Second)
 		resp, err := grpcClient.FetchPrice(ctx, &proto.PriceRequest{Ticker: "BTC"})
-		if err!= nil {
+		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("%+v\n",resp)
+		fmt.Printf("%+v\n", resp)
 	}()
 
 	go makeGRPCServerAndRun(*grpcAddr, svc)
@@ -52,5 +57,4 @@ func main(){
 	jsonServer := NewJSONAPIServer(*jsonAddr, svc)
 	jsonServer.Run()
 
-	
 }

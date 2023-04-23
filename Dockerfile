@@ -8,7 +8,8 @@ COPY . ./
 
 RUN go build -o /pricefetcher
 
-EXPOSE 3000
+#EXPOSE 3000
+EXPOSE 4000/tcp
 
 CMD ["/pricefetcher"]
 

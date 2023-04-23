@@ -11,15 +11,16 @@ import (
 
 func makeGRPCServerAndRun(listenAddr string, svc PriceFetcher) error {
 	grpcPriceFetcher := NewGRPCPriceFetcherServer(svc)
-	
+
 	ln, err := net.Listen("tcp", listenAddr)
-	if err!=nil {
-		return err 
+	if err != nil {
+		return err
 	}
 
-	opts:= []grpc.ServerOption{	}
+	opts := []grpc.ServerOption{}
 	server := grpc.NewServer(opts...)
 	proto.RegisterPriceFetcherServer(server, grpcPriceFetcher)
+
 	return server.Serve(ln)
 
 }
@@ -35,16 +36,16 @@ func NewGRPCPriceFetcherServer(svc PriceFetcher) *GRPCPriceFetcherServer {
 	}
 }
 
-func (s *GRPCPriceFetcherServer) FetchPrice(ctx context.Context, req *proto.PriceRequest) (*proto.PriceResponse, error){
+func (s *GRPCPriceFetcherServer) FetchPrice(ctx context.Context, req *proto.PriceRequest) (*proto.PriceResponse, error) {
 	reqID := rand.Intn(100000)
 	ctx = context.WithValue(ctx, "requestID", reqID)
 	price, err := s.svc.FetchPrice(ctx, req.Ticker)
-	if err!=nil {
-		return nil, err 
+	if err != nil {
+		return nil, err
 	}
 	resp := &proto.PriceResponse{
 		Ticker: req.Ticker,
-		Price: float32(price),
+		Price:  float32(price),
 	}
 	return resp, err
 }
