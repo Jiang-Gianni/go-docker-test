@@ -27,7 +27,7 @@ func main() {
 
 	var (
 		jsonAddr = flag.String("json", ":3000", "listen address of the json transport")
-		grpcAddr = flag.String("grpc", ":4000", "listen address of the grpc transport")
+		grpcAddr = flag.String("grpc", ":10000", "listen address of the grpc transport")
 		// grpcAddr = flag.String("grpc", "go-docker-z86o.onrender.com:443", "listen address of the grpc transport")
 		svc = NewLogginService(NewMetricService(&priceFetcher{}))
 		ctx = context.Background()
