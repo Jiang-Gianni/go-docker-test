@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"math/rand"
 	"net"
 
@@ -16,6 +17,9 @@ func makeGRPCServerAndRun(listenAddr string, svc PriceFetcher) error {
 	if err != nil {
 		return err
 	}
+
+	fmt.Println("listen address ", ln.Addr().String())
+	fmt.Printf("ln is %+v \n", ln)
 
 	opts := []grpc.ServerOption{}
 	server := grpc.NewServer(opts...)

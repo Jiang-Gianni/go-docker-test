@@ -28,7 +28,7 @@ func main() {
 	var (
 		jsonAddr = flag.String("json", ":3000", "listen address of the json transport")
 		grpcAddr = flag.String("grpc", ":4000", "listen address of the grpc transport")
-		// grpcAddr = flag.String("grpc", "865d26c7-59b9-4fd7-b52c-c2d48c49600b:4000", "listen address of the grpc transport")
+		// grpcAddr = flag.String("grpc", "go-docker-z86o.onrender.com:443", "listen address of the grpc transport")
 		svc = NewLogginService(NewMetricService(&priceFetcher{}))
 		ctx = context.Background()
 	)
@@ -47,14 +47,18 @@ func main() {
 		time.Sleep(3 * time.Second)
 		resp, err := grpcClient.FetchPrice(ctx, &proto.PriceRequest{Ticker: "BTC"})
 		if err != nil {
-			//	log.Fatal(err)
+			log.Fatal(err)
 		}
 		fmt.Printf("%+v\n", resp)
 	}()
 
-	//	go makeGRPCServerAndRun(*grpcAddr, svc)
+	_ = svc
 
-	jsonServer := NewJSONAPIServer(*jsonAddr, svc)
-	jsonServer.Run()
+	go makeGRPCServerAndRun(*grpcAddr, svc)
+
+	//	jsonServer := NewJSONAPIServer(*jsonAddr, svc)
+	//	jsonServer.Run()
+
+	select {}
 
 }
